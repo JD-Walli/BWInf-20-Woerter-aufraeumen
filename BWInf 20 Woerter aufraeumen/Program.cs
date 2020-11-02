@@ -7,6 +7,165 @@ using System.Threading.Tasks;
 namespace BWInf_20_Woerter_aufraeumen {
     class Program {
         static void Main(string[] args) {
+            Console.WriteLine("\nLösung:");
+            Console.WriteLine("\n" + findSolution(readFile(@"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel3.txt")));
+            Console.ReadKey();
+        }
+
+        public static string findSolution(Tuple<string[], List<Luecke>, string> input) {
+            string[] woerter = input.Item1;
+            List<Luecke> lueckenPaare = input.Item2;
+            List<Luecke> lueckenPaareLeer = new List<Luecke>();
+            lueckenPaare.Sort(Luecke.compareLuecke);
+            //fügt alle indices der wörter, die in lueckenpaare.key möglich sind, zu lueckenpaare.value hinzu
+            for (int i = 0; i < lueckenPaare.Count; i++) {
+                for (int j = 0; j < woerter.Length; j++) {
+                    if (lueckenPaare[i].luecke.Length == woerter[j].Length) {
+                        int equal = 0;//null=0  true=1 false=2
+                        for (int k = 0; k < woerter[j].Length; k++) {
+                            if (lueckenPaare[i].luecke[k] != '_') {
+                                if (lueckenPaare[i].luecke[k] == woerter[j][k]) {
+                                    equal = 1;
+                                }
+                                else {
+                                    equal = 2;
+                                    break;
+                                }
+                            }
+                        }
+                        if (equal == 1) {
+                            //if (lueckenPaare[i].passtList.Count > 0) {
+                            //jedes wort nur einmal, gleiche wörter missachten
+                            //   bool check = true;
+                            //    for(int l=0;l< lueckenPaare[i].passtList.Count; l++) {
+                            //        if (woerter[j] == woerter[lueckenPaare[i].passtList[l]])
+                            //            check = false;
+                            //    }
+                            //   if (check) {
+                            //    if (woerter[lueckenPaare[i].passtList[lueckenPaare[i].passtList.Count - 1]] != woerter[j]) {
+                            lueckenPaare[i].passtList.Add(j);
+                            Console.WriteLine("+norm {0} beim Wort {1}", woerter[j], i);
+                            //    }
+                            //}
+                            // else {
+                            ////    lueckenPaare[i].passtList.Add(j);
+                            //    Console.WriteLine("+norm {0} beim Wort {1}", woerter[j], i);
+                            // }
+                        }
+                        else if (equal == 0) {
+                            try {
+                                lueckenPaareLeer[lueckenPaareLeer.FindIndex(ind => ind.index.Equals(lueckenPaare[i].index))].passtList.Add(j);
+                                Console.WriteLine("+leer {0} beim Wort {1}", woerter[j], i);
+                            }
+                            catch {
+                                lueckenPaareLeer.Add(new Luecke(lueckenPaare[i].luecke, new List<int> { j }, lueckenPaare[i].index));
+                                Console.WriteLine("+leer {0} beim Wort {1}", woerter[j], i);
+                            }
+                        }
+                    }
+                }
+            }
+
+            lueckenPaare.Sort(Luecke.compareListLength);
+            //leere auffüllen geht noch nicht
+            string[] unbenutzteWoerter = new string[woerter.Length];
+            woerter.CopyTo(unbenutzteWoerter, 0);
+            for (int i = 0; i < lueckenPaare.Count; i++) {
+                for (int j = 0; j < woerter.Length; j++) {
+                    if (lueckenPaare[i].passtList.Contains(j) && lueckenPaare[i].passtList.Count == 1) {
+                        lueckenPaare[i].passt = lueckenPaare[i].passtList[0];
+                        unbenutzteWoerter[j] = "";
+                    }
+                }
+            }
+            
+            for (int i = 0; i < lueckenPaare.Count; i++) {
+                if (lueckenPaare[i].passtList.Count > 1) {
+                    for (int k = 0; k < lueckenPaare[i].passtList.Count; k++) {
+                        if (unbenutzteWoerter[lueckenPaare[i].passtList[k]] != "" ) {
+                            lueckenPaare[i].passt = lueckenPaare[i].passtList[k];
+                            unbenutzteWoerter[lueckenPaare[i].passtList[k]] = "";
+                            for (int a = 0; a < lueckenPaare.Count; a++) {
+                                if (lueckenPaare[a].passtList.Count > 1) {
+                                    for (int b = 0; b < lueckenPaare[a].passtList.Count; b++) {
+                                        bool check = false;
+                                        for (int l = 0; l < lueckenPaare.Count && !check; l++) {
+                                            if (lueckenPaare[i].passtList.Count > 1) {
+                                                for (int m = 0; m < lueckenPaare[l].passtList.Count; m++) {
+                                                    if (lueckenPaare[l].passtList[m] == lueckenPaare[a].passtList[b] && l != a) {
+                                                        check = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (!check) {
+                                            Console.WriteLine("ASDFGHJ: " + a + " " + woerter[b]);
+                                            if (unbenutzteWoerter[lueckenPaare[a].passtList[b]] != "") {
+                                                lueckenPaare[a].passt = lueckenPaare[a].passtList[b];
+                                                unbenutzteWoerter[lueckenPaare[a].passtList[b]] = "";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < lueckenPaareLeer.Count; i++) {
+                for (int k = 0; k < lueckenPaareLeer[i].passtList.Count; k++) {
+                    if (unbenutzteWoerter[lueckenPaareLeer[i].passtList[k]] != "") {
+                        lueckenPaare[lueckenPaare.FindIndex(ind => ind.index.Equals(lueckenPaareLeer[i].index))].passt = lueckenPaareLeer[i].passtList[k];
+                        break;
+                    }
+                }
+            }
+
+            string[] originalText = input.Item3.Split(' ');
+            for (int i = 0; i < lueckenPaare.Count; i++) {
+                Luecke aktuelleLuecke = lueckenPaare[lueckenPaare.FindIndex(ind => ind.index.Equals(i))];
+                string oldstring = originalText[i].Substring(0, woerter[aktuelleLuecke.passt].Length);
+                //Console.WriteLine(string.Join(" ", originalText) + "   \"" + oldstring + "\" -> \"" + woerter[aktuelleLuecke.passt] + "\"");
+                originalText[i] = originalText[i].Replace(oldstring, woerter[aktuelleLuecke.passt]);
+            }
+            return string.Join(" ", originalText);
+        }
+
+        public static Tuple<string[], List<Luecke>, string> readFile(string pfad = @"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel0.txt") {
+            string[] lines = new string[2];
+            string line = "";
+            System.IO.StreamReader file = new System.IO.StreamReader(pfad);
+            for (int i = 0; (line = file.ReadLine()) != null; i++) {
+                lines[i] = line;
+            }
+            file.Close();
+
+            string lines0out = lines[0];
+            string[] woerter = lines[1].Split(' ');
+            Console.WriteLine("Wörter: ");
+            Console.WriteLine(string.Join(", ", woerter));
+            List<Luecke> lueckenPaare = new List<Luecke>();
+            while (lines[0].Contains(",")) {
+                lines[0] = lines[0].Remove(lines[0].IndexOf(","), 1);
+            }
+            while (lines[0].Contains(".")) {
+                lines[0] = lines[0].Remove(lines[0].IndexOf("."), 1);
+            }
+            while (lines[0].Contains("!")) {
+                lines[0] = lines[0].Remove(lines[0].IndexOf("!"), 1);
+            }
+            while (lines[0].Contains("?")) {
+                lines[0] = lines[0].Remove(lines[0].IndexOf("?"), 1);
+            }
+            string[] luecken = lines[0].Split(' ');
+            for (int i = 0; i < luecken.Length; i++) {
+                lueckenPaare.Add(new Luecke(luecken[i].ToCharArray(), new List<int>(), i));
+            }
+
+            return new Tuple<string[], List<Luecke>, string>(woerter, lueckenPaare, lines0out);
         }
     }
 }
