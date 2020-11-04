@@ -122,7 +122,6 @@ namespace BWInf_20_Woerter_aufraeumen {
                                     }
                                 }
                             }
-
                             Console.WriteLine(x + " = ({0} , {1})", wort1, lueckenPaare[wort1].passtList[passt1ind]);
                             x++;
                             y = 0;
