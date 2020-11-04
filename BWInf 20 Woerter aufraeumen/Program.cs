@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using QA_Classification;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace BWInf_20_Woerter_aufraeumen {
     class Program {
         static void Main(string[] args) {
             Console.WriteLine("\nLösung:");
-            Console.WriteLine("\n" + findSolution(readFile(@"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel3.txt")));
+            Console.WriteLine("\n" + findSolution(readFile(@"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel4.txt")));
             Console.ReadKey();
         }
 
@@ -16,7 +17,7 @@ namespace BWInf_20_Woerter_aufraeumen {
             string[] woerter = input.Item1;
             List<Luecke> lueckenPaare = input.Item2;
             List<Luecke> lueckenPaareLeer = new List<Luecke>();
-            lueckenPaare.Sort(Luecke.compareLuecke);
+            //lueckenPaare.Sort(Luecke.compareLuecke);
             //fügt alle indices der wörter, die in lueckenpaare.key möglich sind, zu lueckenpaare.value hinzu
             for (int i = 0; i < lueckenPaare.Count; i++) {
                 for (int j = 0; j < woerter.Length; j++) {
@@ -66,8 +67,8 @@ namespace BWInf_20_Woerter_aufraeumen {
                 }
             }
 
-            lueckenPaare.Sort(Luecke.compareListLength);
-            //leere auffüllen geht noch nicht
+            //lueckenPaare.Sort(Luecke.compareListLength);
+            //klar feststehende (nur eine möglichkeit) einfüllen
             string[] unbenutzteWoerter = new string[woerter.Length];
             woerter.CopyTo(unbenutzteWoerter, 0);
             for (int i = 0; i < lueckenPaare.Count; i++) {
@@ -78,43 +79,98 @@ namespace BWInf_20_Woerter_aufraeumen {
                     }
                 }
             }
-            
+
+            //Optimierungsproblem
+            //alle Luecken wo mehrere Wörter möglich sind werden in Matrix eingefüllt und am QA berechnet
+
+            //matrixlength berechnen
+            int matrixlength = 0;
             for (int i = 0; i < lueckenPaare.Count; i++) {
                 if (lueckenPaare[i].passtList.Count > 1) {
-                    for (int k = 0; k < lueckenPaare[i].passtList.Count; k++) {
-                        if (unbenutzteWoerter[lueckenPaare[i].passtList[k]] != "" ) {
-                            lueckenPaare[i].passt = lueckenPaare[i].passtList[k];
-                            unbenutzteWoerter[lueckenPaare[i].passtList[k]] = "";
-                            for (int a = 0; a < lueckenPaare.Count; a++) {
-                                if (lueckenPaare[a].passtList.Count > 1) {
-                                    for (int b = 0; b < lueckenPaare[a].passtList.Count; b++) {
-                                        bool check = false;
-                                        for (int l = 0; l < lueckenPaare.Count && !check; l++) {
-                                            if (lueckenPaare[i].passtList.Count > 1) {
-                                                for (int m = 0; m < lueckenPaare[l].passtList.Count; m++) {
-                                                    if (lueckenPaare[l].passtList[m] == lueckenPaare[a].passtList[b] && l != a) {
-                                                        check = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (!check) {
-                                            Console.WriteLine("ASDFGHJ: " + a + " " + woerter[b]);
-                                            if (unbenutzteWoerter[lueckenPaare[a].passtList[b]] != "") {
-                                                lueckenPaare[a].passt = lueckenPaare[a].passtList[b];
-                                                unbenutzteWoerter[lueckenPaare[a].passtList[b]] = "";
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            break;
+                    for (int j = 0; j < lueckenPaare[i].passtList.Count; j++) {
+                        if (unbenutzteWoerter[lueckenPaare[i].passtList[j]] != "") {
+                            matrixlength++;
                         }
                     }
                 }
             }
 
+            float[,] matrix = new float[matrixlength, matrixlength];
+            int x = 0, y = 0;
+            for (int wort1 = 0; wort1 < lueckenPaare.Count; wort1++) {
+                if (lueckenPaare[wort1].passtList.Count > 1) {
+                    for (int passt1ind = 0; passt1ind < lueckenPaare[wort1].passtList.Count; passt1ind++) {
+                        if (unbenutzteWoerter[lueckenPaare[wort1].passtList[passt1ind]] != "") {
+                            for (int wort2 = 0; wort2 < lueckenPaare.Count; wort2++) {
+                                if (lueckenPaare[wort2].passtList.Count > 1) {
+                                    for (int passt2ind = 0; passt2ind < lueckenPaare[wort2].passtList.Count; passt2ind++) {
+                                        if (unbenutzteWoerter[lueckenPaare[wort2].passtList[passt2ind]] != "") {
+                                            int passt1 = lueckenPaare[wort1].passtList[passt1ind];
+                                            int passt2 = lueckenPaare[wort2].passtList[passt2ind];
+
+                                            if (wort1 == wort2) {
+                                                if (passt1 == passt2) { matrix[x, y] = -2; } //grundbelohnung
+                                                else { matrix[x, y] = 2; } //bestrafung: nur ein passt pro wort
+                                            }
+
+                                            if (passt1 == passt2 && wort1 != wort2) {
+                                                matrix[x, y] = 2; //bestrafung jedes passt nur einmal
+                                            }
+
+                                            y++;
+                                        }
+                                    }
+                                }
+                            }
+
+                            Console.WriteLine(x + " = ({0} , {1})", wort1, lueckenPaare[wort1].passtList[passt1ind]);
+                            x++;
+                            y = 0;
+                        }
+                    }
+                }
+            }
+
+            Matrix.printMatrix(matrix);
+            qaConstellation constellation;
+            try {
+                Dictionary<string, string> qaArguments = new Dictionary<string, string>() {
+                {"annealing_time","30"},
+                {"num_reads","1000"}, //max 10000 (limitation by dwave)
+                {"chain_strength","1.7" }
+                };
+                Dictionary<string, string> pyParams = new Dictionary<string, string>() {
+                {"problem_type","qubo"}, //qubo //ising
+                {"dwave_solver", "DW_2000Q_6"}, //DW_2000Q_6 //Advantage_system1.1
+                {"dwave_inspector","false" }
+                };
+                Task<qaConstellation> constellationTask = QA_Classification.Program.qaCommunication(matrix, qaArguments, pyParams);
+                constellation = constellationTask.Result;
+                constellation.printConstellation();
+                QA_Classification.Program.getUserInput(constellation, matrix);
+
+                int[] solution = constellation.results[constellation.getLowest(1)].Item4;
+                int c = 0;
+                for (int wort1 = 0; wort1 < lueckenPaare.Count; wort1++) {
+                    if (lueckenPaare[wort1].passtList.Count > 1) {
+                        for (int passt1ind = 0; passt1ind < lueckenPaare[wort1].passtList.Count; passt1ind++) {
+                            if (unbenutzteWoerter[lueckenPaare[wort1].passtList[passt1ind]] != "") {
+                                if (solution[c] == 1) {
+                                    lueckenPaare[wort1].passt = lueckenPaare[wort1].passtList[passt1ind];
+                                }
+                                c++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine("\nERROR occured:");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            
+            //leere auffüllen
             for (int i = 0; i < lueckenPaareLeer.Count; i++) {
                 for (int k = 0; k < lueckenPaareLeer[i].passtList.Count; k++) {
                     if (unbenutzteWoerter[lueckenPaareLeer[i].passtList[k]] != "") {
