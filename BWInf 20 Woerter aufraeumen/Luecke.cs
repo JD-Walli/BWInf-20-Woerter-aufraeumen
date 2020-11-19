@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 namespace BWInf_20_Woerter_aufraeumen {
     class Luecke {
         public char[] luecke;
-        public int passt;//=-1
+        public int passt;
         public List<int> passtList;
         public int index;
-
-        //public Luecke(char[] luecke, int passt, int index) {
-        //    this.luecke = luecke;
-        //    this.passt = passt;
-        //    this.index = index;
-        //}
+        
 
         public Luecke(char[] luecke, List<int> passtList, int index) {
             this.luecke = luecke;
