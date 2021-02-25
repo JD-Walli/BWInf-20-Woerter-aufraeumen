@@ -29,4 +29,5 @@ Um zur Lösung zu kommen, bin ich in mehreren Schritten vorgegangen:
 2.	Alle Lücken mit nur einer Möglichkeit befüllen
 3.	Verteilung der Wörter auf die Lücken mit mehreren passenden Wörtern als „QUBO“ Optimierungsproblem formulieren und mit einem adiabatischen Quanten-Annealer lösen
 4.	Lücken ohne vorgegebenen Buchstaben mit übrigen Wörtern auffüllen
+
 Ausführlicheres in Doku.docx
