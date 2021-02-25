@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using QA_Classification;
+using QA_Communication;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BWInf_20_Woerter_aufraeumen {
+namespace BwInf_39_1_1_Woerter_aufraeumen {
     class Program {
         static void Main(string[] args) {
             Console.WriteLine("\nLösung:");
-            Console.WriteLine("\n" + findSolution(readFile(@"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel4.txt")));
+            Console.WriteLine("\n" + findSolution(readFile(System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName+@"\raetsel4.txt")));
             Console.ReadKey();
         }
 
@@ -151,12 +151,12 @@ namespace BWInf_20_Woerter_aufraeumen {
                 {"dwave_solver", "DW_2000Q_6"}, //DW_2000Q_6 //Advantage_system1.1
                 {"dwave_inspector","false" }
                 };
-                    Task<qaConstellation> constellationTask = QA_Classification.Program.qaCommunication(matrix, qaArguments, pyParams);
+                    Task<qaConstellation> constellationTask = QA_Communication.Program.qaCommunication(matrix, qaArguments, pyParams);
                     constellation = constellationTask.Result;
                     constellation.printConstellation();
-                    QA_Classification.Program.getUserInput(constellation, matrix);
+                    QA_Communication.Program.getUserInput(constellation, matrix);
 
-                    int[] solution = constellation.results[constellation.getLowest(1)].Item4;
+                    int[] solution = constellation.results[constellation.getLowest(1,new List<int>())[0]].Item4;
                     int c = 0;
                     for (int lücke = 0; lücke < luecken.Count; lücke++) {
                         if (luecken[lücke].passtList.Count > 1) {
@@ -188,7 +188,7 @@ namespace BWInf_20_Woerter_aufraeumen {
             return string.Join(" ", originalText);
         }
 
-        public static Tuple<string[], List<Luecke>, string> readFile(string pfad = @"C:\Users\Jakov\Desktop\git\BWInf 20\BWInf 20 Woerter aufraeumen\raetsel4.txt") {
+        public static Tuple<string[], List<Luecke>, string> readFile(string pfad = @"C:\Users\Jakov\Desktop\git\BWInf 20\BwInf 39.1.1 Woerter aufraeumen\raetsel4.txt") {
             string[] lines = new string[2];
             string line = "";
             System.IO.StreamReader file = new System.IO.StreamReader(pfad);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BWInf_20_Woerter_aufraeumen {
+namespace BwInf_39_1_1_Woerter_aufraeumen {
     class Luecke {
         public char[] luecke;
         public int passt;

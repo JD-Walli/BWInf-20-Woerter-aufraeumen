@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6E78C406-46F8-40E4-ACAF-B57942388963}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>BWInf_20_Woerter_aufraeumen</RootNamespace>
-    <AssemblyName>BWInf 20 Woerter aufraeumen</AssemblyName>
+    <RootNamespace>BwInf_39_1_1_Woerter_aufraeumen</RootNamespace>
+    <AssemblyName>BwInf_39_1_1_Woerter_aufraeumen</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -33,8 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QA_Classification">
-      <HintPath>..\..\..\QA_Classification\QA_Classification\bin\Debug\QA_Classification.exe</HintPath>
+    <Reference Include="QA_Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\QA_Communication\QA_Communication\obj\Debug\QA_Communication.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
