@@ -9,7 +9,7 @@ namespace BwInf_39_1_1_Woerter_aufraeumen {
     class Program {
         static void Main(string[] args) {
             Console.WriteLine("\nLösung:");
-            Console.WriteLine("\n" + findSolution(readFile(System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName+@"\raetsel4.txt")));
+            Console.WriteLine("\n" + findSolution(readFile(System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + @"\raetsel4.txt")));
             Console.ReadKey();
         }
 
@@ -156,7 +156,7 @@ namespace BwInf_39_1_1_Woerter_aufraeumen {
                     constellation.printConstellation();
                     QA_Communication.Program.getUserInput(constellation, matrix);
 
-                    int[] solution = constellation.results[constellation.getLowest(1,new List<int>())[0]].Item4;
+                    int[] solution = constellation.results[constellation.getLowest(1, new List<int>())[0]].result;
                     int c = 0;
                     for (int lücke = 0; lücke < luecken.Count; lücke++) {
                         if (luecken[lücke].passtList.Count > 1) {
